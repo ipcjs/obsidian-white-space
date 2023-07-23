@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { Emoji } from '@/emoji';
+import { emojiListField, emojiListPlugin, emojiMarkdownProcessor } from '@/emoji';
 
 interface WhiteSpacePluginSettings {
 	enable: boolean;
@@ -85,18 +85,9 @@ export default class WhiteSpacePlugin extends Plugin {
 		}
 
 		// 替换code中的emoji
-		this.registerMarkdownPostProcessor((element, context) => {
-			console.log(element.innerHTML)
-			const codeblocks = element.querySelectorAll("code");
-			for (let index = 0; index < codeblocks.length; index++) {
-				const codeblock = codeblocks.item(index);
-				const text = codeblock.innerText.trim();
-				const isEmoji = text[0] === ":" && text[text.length - 1] === ":";
-				if (isEmoji) {
-					context.addChild(new Emoji(codeblock, text));
-				}
-			}
-		})
+		if (true) this.registerMarkdownPostProcessor(emojiMarkdownProcessor)
+		if (false) this.registerEditorExtension(emojiListField)
+		if (true) this.registerEditorExtension(emojiListPlugin)
 	}
 
 	onunload() {
