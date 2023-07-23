@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Emoji } from '@/emoji';
 
 interface WhiteSpacePluginSettings {
 	enable: boolean;
@@ -82,6 +83,20 @@ export default class WhiteSpacePlugin extends Plugin {
 			// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 			this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 		}
+
+		// 替换code中的emoji
+		this.registerMarkdownPostProcessor((element, context) => {
+			console.log(element.innerHTML)
+			const codeblocks = element.querySelectorAll("code");
+			for (let index = 0; index < codeblocks.length; index++) {
+				const codeblock = codeblocks.item(index);
+				const text = codeblock.innerText.trim();
+				const isEmoji = text[0] === ":" && text[text.length - 1] === ":";
+				if (isEmoji) {
+					context.addChild(new Emoji(codeblock, text));
+				}
+			}
+		})
 	}
 
 	onunload() {
