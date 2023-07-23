@@ -1,11 +1,11 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface WhiteSpacePluginSettings {
-	mySetting: string;
+	enable: boolean;
 }
 
 const DEFAULT_SETTINGS: WhiteSpacePluginSettings = {
-	mySetting: 'default'
+	enable: true
 }
 
 export default class WhiteSpacePlugin extends Plugin {
@@ -70,7 +70,7 @@ export default class WhiteSpacePlugin extends Plugin {
 		}
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new SettingTab(this.app, this));
 
 		if (false) {
 			// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
@@ -113,7 +113,7 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class SettingTab extends PluginSettingTab {
 	plugin: WhiteSpacePlugin;
 
 	constructor(app: App, plugin: WhiteSpacePlugin) {
@@ -125,16 +125,15 @@ class SampleSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+			.setName('Enable')
+			.setDesc('Default enable/disable show white space.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enable)
+				.onChange(async value => {
+					this.plugin.settings.enable = value
+					await this.plugin.saveSettings()
+				})
+			)
 	}
 }
