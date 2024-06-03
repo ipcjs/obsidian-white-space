@@ -40,7 +40,23 @@ class EmojiWidget extends WidgetType {
 		div.innerHTML = '👉🏻️'
 		return div
 	}
+}
 
+class EscapeWidget extends WidgetType {
+	toDOM(view: EditorView): HTMLElement {
+		const span = document.createElement('span')
+		span.textContent = '\\'
+		span.setCssStyles({
+			color: 'var(--text-faint)',
+		})
+		return span
+	}
+}
+
+class EmptyWidget extends WidgetType {
+	toDOM(view: EditorView): HTMLElement {
+		return document.createElement('span')
+	}
 }
 
 function updateImpl(state: EditorState) {
@@ -48,7 +64,16 @@ function updateImpl(state: EditorState) {
 	syntaxTree(state).iterate({
 		enter(node) {
 			// console.log(node.type.name)
-			if (node.type.name.startsWith('list')) {
+			if (node.type.name === 'formatting-escape') {
+				builder.add(
+					node.from,
+					node.to,
+					Decoration.replace({
+						widget: new EscapeWidget()
+					})
+				)
+			}
+			if (false && node.type.name.startsWith('list')) {
 				// console.log(node.type.name, node)
 				const listCharFrom = node.from - 2;
 				builder.add(
