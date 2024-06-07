@@ -53,9 +53,24 @@ class EscapeViewPlugin implements PluginValue {
 			syntaxTree(view.state).iterate({
 				from, to, enter(node) {
 					console.log(node.type.name, view.state.sliceDoc(node.from, node.to), node)
+					if (node.type.name === 'formatting-escape') {
+						const line = view.state.sliceDoc(node.from - 1, node.to + 1)
+						if (line === '\n\\\n' || line === '\\\n') {
+							builder.add(node.from, node.to, Decoration.replace({ widget: new EscapeWidget() }))
+						}
+					}
 				}
 			})
 		}
 		return builder.finish()
+	}
+}
+
+export class EscapeWidget extends WidgetType {
+	toDOM(view: EditorView): HTMLElement {
+		const span = document.createElement("span")
+		span.innerText = "\\"
+		span.className = 'escape-line'
+		return span;
 	}
 }
