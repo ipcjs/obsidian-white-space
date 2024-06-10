@@ -1,9 +1,6 @@
 import { Plugin } from 'obsidian';
 import {
-	Extension,
 	RangeSetBuilder,
-	StateField,
-	Transaction,
 } from "@codemirror/state";
 import {
 	Decoration,
