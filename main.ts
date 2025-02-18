@@ -11,7 +11,6 @@ import {
 	ViewUpdate,
 	WidgetType,
 } from "@codemirror/view";
-import { syntaxTree } from "@codemirror/language";
 
 export default class HideEscapePlugin extends Plugin {
 
@@ -47,17 +46,14 @@ class EscapeViewPlugin implements PluginValue {
 	buildDecorations(view: EditorView): DecorationSet {
 		const builder = new RangeSetBuilder<Decoration>()
 		for (const { from, to } of view.visibleRanges) {
-			syntaxTree(view.state).iterate({
-				from, to, enter(node) {
-					console.log(node.type.name, view.state.sliceDoc(node.from, node.to), node)
-					if (node.type.name === 'formatting-escape') {
-						const line = view.state.sliceDoc(node.from - 1, node.to + 1)
-						if (line === '\n\\\n' || line === '\\\n') {
-							builder.add(node.from, node.to, Decoration.replace({ widget: new EscapeWidget() }))
-						}
-					}
+			let pos = from
+			while (pos <= to) {
+				const line = view.state.doc.lineAt(pos);
+				if (line.text === '\\') {
+					builder.add(line.from, line.to, Decoration.replace({ widget: new EscapeWidget() }));
 				}
-			})
+				pos = line.to + 1;
+			}
 		}
 		return builder.finish()
 	}
