@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-hide-escape",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This is a plugin that hide escape in preview mode for Obsidian",
 	"main": "main.js",
 	"scripts": {
